@@ -1,7 +1,5 @@
 # Lab 2 – Deep Learning avec PyTorch (GPU)
 
-
-
 ## 1. Objectif
 Prendre en main PyTorch pour construire des architectures de vision par ordinateur (CNN, Faster R-CNN, modèles pré-entraînés, Vision Transformer) et les comparer sur MNIST, en mode GPU (Tesla T4, Google Colab).
 
@@ -9,13 +7,10 @@ Prendre en main PyTorch pour construire des architectures de vision par ordinate
 | Fichier | Description |
 |---|---|
 | `Lab2_DeepLearning.ipynb` | Notebook complet exécuté (code + sorties) |
-| `images/` | Courbes, matrices de confusion et comparaisons exportées du notebook |
 | `README.md` | Ce rapport |
 
 ## 3. Données
 MNIST : 60 000 images d'entraînement, 10 000 de test (28×28, 10 classes), chargé via `torchvision.datasets.MNIST` (identique au dataset Kaggle `hojjatk/mnist-dataset`).
-
-![Exemples MNIST](images/mnist_samples.png)
 
 ## 4. Modèles et hyper-paramètres
 
@@ -41,6 +36,8 @@ MNIST : 60 000 images d'entraînement, 10 000 de test (28×28, 10 classes), char
 
 ## 5. Résultats (mesurés sur Tesla T4)
 
+Les courbes, matrices de confusion et graphiques de comparaison sont disponibles dans le notebook `Lab2_DeepLearning.ipynb`.
+
 | Modèle | Accuracy | F1 (macro) | Loss (test) | Temps d'entraînement (s) | Paramètres |
 |---|---|---|---|---|---|
 | **CNN** | **0.9907** | **0.9907** | **0.0253** | 80.6 | 0,42 M |
@@ -51,34 +48,17 @@ MNIST : 60 000 images d'entraînement, 10 000 de test (28×28, 10 classes), char
 
 > **Attention à la lecture des temps** : ils ne portent pas sur les mêmes volumes de données. CNN : 60 000 images × 5 epochs ; ViT : 60 000 × 10 epochs ; VGG16/AlexNet : 20 000 × 2 epochs ; Faster R-CNN : 10 000 × 3 epochs.
 
-![Comparaison globale](images/compare_all.png)
-![Accuracy par epoch](images/accuracy_per_epoch.png)
-
 ### 5.1 CNN
 Accuracy test de 98,32 % dès la 1ʳᵉ epoch, 99,07 % à la 5ᵉ ; la loss de test baisse régulièrement (0.0486 → 0.0253) sans signe de sur-apprentissage.
 
-![Courbes CNN](images/cnn_curves.png)
-![Matrice de confusion CNN](images/cnn_confusion.png)
-
 ### 5.2 Faster R-CNN : entraînement non convergent
-La loss est devenue `NaN` dès la 1ʳᵉ epoch, le modèle ne produit donc aucune détection (accuracy = 0 %, voir la figure : aucune boîte affichée). Il s'agit d'une **divergence numérique de l'entraînement**, pas d'une limite du modèle : la combinaison SGD avec un learning rate de 0.01 sur des têtes initialisées aléatoirement est probablement trop agressive. Les résultats de Faster R-CNN ne sont donc **pas exploitables** dans cette version ; une nouvelle exécution avec un learning rate plus faible (≈ 0.002), un warm-up et un gradient clipping est nécessaire pour obtenir une vraie comparaison avec le CNN.
-
-![Détections Faster R-CNN](images/frcnn_detections.png)
-![Comparaison CNN vs Faster R-CNN](images/compare_cnn_frcnn.png)
+La loss est devenue `NaN` dès la 1ʳᵉ epoch, le modèle ne produit donc aucune détection (accuracy = 0 %, aucune boîte n'est affichée dans le notebook). Il s'agit d'une **divergence numérique de l'entraînement**, pas d'une limite du modèle : la combinaison SGD avec un learning rate de 0.01 sur des têtes initialisées aléatoirement est probablement trop agressive. Les résultats de Faster R-CNN ne sont donc **pas exploitables** dans cette version ; une nouvelle exécution avec un learning rate plus faible (≈ 0.002), un warm-up et un gradient clipping est nécessaire pour obtenir une vraie comparaison avec le CNN.
 
 ### 5.3 VGG16 et AlexNet (fine-tuning)
 Après 2 epochs, VGG16 atteint 96,20 % et AlexNet 93,72 %. Les deux restent en dessous du CNN simple.
 
-![AlexNet](images/alexnet_curves.png)
-![VGG16](images/vgg16_curves.png)
-![Comparaison CNN / AlexNet / VGG16](images/compare_transfer.png)
-
 ### 5.4 Vision Transformer
 L'accuracy passe de 92,45 % (epoch 1) à 98,40 % (epoch 10). La courbe est encore ascendante, mais la loss de test se stabilise vers 0.052.
-
-![Courbes ViT](images/vit_curves.png)
-![Matrice de confusion ViT](images/vit_confusion.png)
-![Attention du token CLS](images/vit_attention.png)
 
 ## 6. Analyse et conclusion
 - **CNN** : meilleur modèle (99,07 %) avec un coût très faible. Les convolutions (localité, partage de poids, invariance à la translation) sont parfaitement adaptées à des chiffres manuscrits centrés.
