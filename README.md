@@ -1,8 +1,5 @@
 # Lab 2 – Deep Learning avec PyTorch (GPU)
 
-**Université Abdelmalek Essaadi – FST Tanger – Département Génie Informatique – Cycle LSI**
-**Module :** Deep Learning – Pr. ELAACHAK Lotfi
-**Étudiant :** _Votre nom_
 
 ## 1. Objectif
 Prendre en main PyTorch pour construire des architectures de vision par ordinateur (CNN, Faster R-CNN, modèles pré-entraînés, Vision Transformer) et les comparer sur MNIST, en mode GPU.
